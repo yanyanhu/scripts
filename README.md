@@ -1,2 +1,2 @@
 # scripts
-Some useful scripts.
+Some useful scripts for daily work.
