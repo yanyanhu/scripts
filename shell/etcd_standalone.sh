@@ -1,11 +1,10 @@
 #!/bin/bash
 
-export PUBLIC_IP=$1
+export HostIP=$1
 
 docker run -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 -p 2380:2380 -p 2379:2379 \
- --name etcd0 \
- quay.io/coreos/etcd:latest \
- /usr/bin/etcd \
+ --name etcd quay.io/coreos/etcd:v2.2.0 \
+ -name etcd0 \
  -advertise-client-urls http://${HostIP}:2379,http://${HostIP}:4001 \
  -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
  -initial-advertise-peer-urls http://${HostIP}:2380 \
