@@ -1,12 +1,9 @@
 #!/bin/bash
 
 KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
-apiserver_ip=9.12.246.94
-apiserver_port=8080
 log_level=3
 
-$KUBE_HOME/kube-scheduler \
---master=${apiserver_ip}:${apiserver_port} \
---v=${log_level} \
+$KUBE_HOME/kube-dns \
 --log_dir=/var/log/kubernetes \
+--v=${log_level} \
 > /dev/null 2>&1 &

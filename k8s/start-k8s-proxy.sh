@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
-apiserver_ip=172.17.42.1
+apiserver_ip=9.12.246.94
 apiserver_port=8080
 log_level=3
 

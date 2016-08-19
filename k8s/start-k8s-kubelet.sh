@@ -3,10 +3,10 @@
 
 KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
 kubelet_port=10250
-apiserver_ip=172.17.42.1
+apiserver_ip=9.12.246.94
 apiserver_port=8080
-dns_ip=172.17.42.1
-node_ip=172.17.42.1
+dns_ip=9.12.246.94
+node_ip=9.12.246.94
 log_level=3
 
 $KUBE_HOME/kubelet \
@@ -22,4 +22,5 @@ $KUBE_HOME/kubelet \
 --cluster-dns=${dns_ip} \
 --cluster-domain=cluster.local \
 --node-ip=${node_ip} \
-> /dev/null 2>&1 &	
+--cadvisor-port=4194 \
+> /dev/null 2>&1 &
