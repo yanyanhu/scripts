@@ -1,7 +1,8 @@
 # How to setup kubernetes cluster in a single node
+==================================================
 
 Step1. Building kubernetes
-==========================
+--------------------------
 
 $git clone https://github.com/kubernetes/kubernetes.git
 
@@ -15,7 +16,7 @@ if the building was done in x86 environment, the binaries will be at
 
 
 Step2. Running kubernetes service
-=================================
+---------------------------------
 
 Kubernetes consists of multiple different sub-services, e.g. api-server,
 kubelet, kube-proxy, kube-dns, etc.. All these sub-services can be run
@@ -25,8 +26,8 @@ which can be either physical machine or virtual machine.
 
 https://github.com/yanyanhu/scripts/tree/master/k8s
 
-Please change $KUBE_HOME to the path of you own kubernetes folder and also
-revise the network related parameters in *.sh scripts, like `apiserver_ip`,
+Please change `$KUBE_HOME` to the path of you own kubernetes folder and also
+revise the network related parameters in `*.sh` scripts, like `apiserver_ip`,
 `dns_ip`, `node_ip`, `etcd_server_ip`(you can simpliy change all of them
 to the IP address of your host where k8s cluster is deployed in).
 
