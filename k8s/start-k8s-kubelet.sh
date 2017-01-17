@@ -16,7 +16,7 @@ $KUBE_HOME/kubelet \
 --log_dir=/var/log/kubernetes \
 --address=0.0.0.0 \
 --port=${kubelet_port} \
---hostname_override=${apiserver_ip} \
+--hostname_override=${node_ip} \
 --api_servers=http://${apiserver_ip}:${apiserver_port} \
 --cpu-cfs-quota=false \
 --cluster-dns=${dns_ip} \
