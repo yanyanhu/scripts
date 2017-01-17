@@ -1,8 +1,8 @@
 #!/bin/bash
 
-KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
+#KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
 apiserver_port=8080
-etcd_server_ip=9.12.246.94
+etcd_server_ip=$ETCD_SERVER
 etcd_client_port=2379
 service_ip_range=10.0.0.0/24
 log_level=3

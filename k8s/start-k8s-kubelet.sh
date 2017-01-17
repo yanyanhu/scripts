@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
+#KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
 kubelet_port=10250
-apiserver_ip=9.12.246.94
+apiserver_ip=$KUBE_APISERVER
 apiserver_port=8080
-dns_ip=9.12.246.94
-node_ip=9.12.246.94
+dns_ip=$KUBE_DNS
+node_ip=$NODE_IP
 log_level=3
 
 $KUBE_HOME/kubelet \
