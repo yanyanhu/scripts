@@ -9,5 +9,6 @@ $KUBE_HOME/kube-controller-manager  \
 --v=${log_level} \
 --logtostderr=false \
 --log_dir=/var/log/kubernetes \
+--cloud-provider="" \
 --master=${apiserver_ip}:${apiserver_port} \
 > /dev/null 2>&1 &
