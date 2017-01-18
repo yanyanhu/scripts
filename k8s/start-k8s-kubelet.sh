@@ -25,5 +25,5 @@ $KUBE_HOME/kubelet \
 --cadvisor-port=4194 \
 --network-plugin=cni \
 --network-plugin-dir=/etc/cni/net.d \
---cni-bin-dir=/opt/cni/bin \
+#--cni-bin-dir=/opt/cni/bin \
 > /dev/null 2>&1 &
