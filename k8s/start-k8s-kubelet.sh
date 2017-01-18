@@ -19,11 +19,11 @@ $KUBE_HOME/kubelet \
 --hostname_override=${node_ip} \
 --api_servers=http://${apiserver_ip}:${apiserver_port} \
 --cpu-cfs-quota=false \
-#--cluster-dns=${dns_ip} \
 --cluster-domain=cluster.local \
 --node-ip=${node_ip} \
 --cadvisor-port=4194 \
 --network-plugin=cni \
 --network-plugin-dir=/etc/cni/net.d \
 > /dev/null 2>&1 &
-#--cni-bin-dir=/opt/cni/bin \
+#--cluster-dns=${dns_ip}
+#--cni-bin-dir=/opt/cni/bin
