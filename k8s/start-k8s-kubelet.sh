@@ -23,7 +23,8 @@ $KUBE_HOME/kubelet \
 --node-ip=${node_ip} \
 --cadvisor-port=4194 \
 --network-plugin=cni \
---network-plugin-dir=/etc/cni/net.d \
+--cni-conf-dir=/etc/cni/net.d \
+--cni-bin-dir=/opt/cni/bin \
 > /dev/null 2>&1 &
+#--network-plugin-dir=/etc/cni/net.d \
 #--cluster-dns=${dns_ip}
-#--cni-bin-dir=/opt/cni/bin
