@@ -20,6 +20,7 @@ $KUBE_HOME/kubelet \
 --api_servers=http://${apiserver_ip}:${apiserver_port} \
 --cpu-cfs-quota=false \
 --cluster-domain=cluster.local \
+--cluster-dns=${dns_ip} \
 --node-ip=${node_ip} \
 --cadvisor-port=4194 \
 --network-plugin=cni \
@@ -27,4 +28,3 @@ $KUBE_HOME/kubelet \
 --cni-bin-dir=/opt/cni/bin \
 > /dev/null 2>&1 &
 #--network-plugin-dir=/etc/cni/net.d \
-#--cluster-dns=${dns_ip}

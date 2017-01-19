@@ -3,7 +3,7 @@
 export KUBE_HOME=/home/huyanyan/k8s/kubernetes/_output/local/bin/linux/amd64
 export ETCD_SERVER=9.186.107.219
 export KUBE_APISERVER=9.186.107.219
-export KUBE_DNS=9.186.107.219
+export KUBE_DNS=10.0.0.250 #ClusterIP of kubedns service
 export NODE_IP=$1
 
 echo "starting proxy..."

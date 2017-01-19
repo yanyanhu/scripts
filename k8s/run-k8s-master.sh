@@ -17,8 +17,8 @@ echo "starting scheduler..."
 ./start-k8s-scheduler.sh
 sleep 3
 
-echo "starting dns..."
-./start-k8s-dns.sh
-sleep 3
+#echo "starting dns..."
+#./start-k8s-dns.sh
+#sleep 3
 
 echo "done."
