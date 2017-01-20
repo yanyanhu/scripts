@@ -4,7 +4,7 @@
 apiserver_port=8080
 etcd_server_ip=$ETCD_SERVER
 etcd_client_port=2379
-service_ip_range=10.0.0.0/24
+service_ip_range=$SERVICE_IP_RANGE
 log_level=3
 
 $KUBE_HOME/kube-apiserver \
