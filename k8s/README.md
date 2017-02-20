@@ -40,3 +40,5 @@ https://github.com/yanyanhu/scripts/blob/master/docker/etcd_standalone.sh
 
 Also flannel is not configured in this setup progress. So extra work is needed
 to enable inter-containers communication cross mutiple hosts.
+
+# Warning: update on these scripts has been stopped since Jan. 20th 2017.
