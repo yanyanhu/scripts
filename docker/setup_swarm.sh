@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apt-get -y install docker.io
-echo 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"' >> /etc/default/docker
+echo 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=consul://9.1.34.129:8500 --cluster-advertise=eth0:2376"' >> /etc/default/docker
 /etc/init.d/docker restart
 
 # ifconfig eth0:0 | grep -i "inet addr"
