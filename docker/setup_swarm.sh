@@ -1,8 +1,12 @@
 #!/bin/bash
 
 apt-get -y install docker.io
-echo 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=consul://9.1.34.129:8500 --cluster-advertise=eth0:2376"' >> /etc/default/docker
+echo 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=consul://9.1.34.129:8500 --cluster-advertise=eth0:2376 --label owner=org1"' >> /etc/default/docker
 /etc/init.d/docker restart
+
+# For label based node filtering, using the following format definition in docker-compose file
+#    environment:
+#      - "constraint:owner==org1"
 
 # ifconfig eth0:0 | grep -i "inet addr"
 
