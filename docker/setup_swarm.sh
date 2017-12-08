@@ -4,7 +4,8 @@
 apt-get -y install docker.io
 export MASTERIP=9.1.34.139
 echo 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=consul://${MASTERIP}:8500 --cluster-advertise=eth0:2375 --label owner=org1"' >> /etc/default/docker
-sed -e 's/${MASTERIP}/'$MASTERIP'/g' /etc/default/docker > /etc/default/docker
+sed -e 's/${MASTERIP}/'$MASTERIP'/g' /etc/default/docker > /etc/default/docker.tmp
+mv /etc/default/docker.tmp /etc/default/docker
 /etc/init.d/docker restart
 
 # For label based node filtering, using the following format definition in docker-compose file
