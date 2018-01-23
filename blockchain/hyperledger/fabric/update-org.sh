@@ -48,7 +48,7 @@ peer channel signconfigtx -f config_update_as_envelope.pb -o orderer.example.com
 # Set the environment to be the latest org msp, e.g. Org6MSP with an admin privileged user in preparation for signing and submitting the update transaction
 CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/peers/peer0.org6.example.com/tls/ca.crt
 CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/peers/peer0.org6.example.com/tls/server.key
-CORE_PEER_LOCALMSPID=org6MSP
+CORE_PEER_LOCALMSPID=Org6MSP
 CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/peers/peer0.org6.example.com/tls/server.crt
 CORE_PEER_TLS_ENABLED=true
 CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/users/Admin@org6.example.com/msp
@@ -58,3 +58,10 @@ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypt
 # update before submitting it to the orderer (so signconfigtx is not needed for org6)
 peer channel update -f config_update_as_envelope.pb -o orderer.example.com:7050 -c mychannel --tls --cafile \
     /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+# Fetch the updated current configuration
+peer channel fetch config config_block_Org7MSP.pb -o orderer.example.com:7050 -c mychannel --tls --cafile \
+    /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+# Decode the successfully updated current channel configuration, and verify correct operation
+curl -X POST --data-binary @config_block_Org7MSP.pb http://127.0.0.1:7059/protolator/decode/common.Block > config_block_Org7MSP.json
