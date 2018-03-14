@@ -40,3 +40,11 @@ module.exports = {
     }
 };
 ```
+
+### Access contract in Truffle
+>var app
+>Casino.deployed().then(function(instance) { app = instance; })
+>app.bet(5, {gas: 300000, from: web3.eth.accounts[0], value: web3.toWei(0.5, 'ether')})
+
+### Get contract ABI
+>app.abi
