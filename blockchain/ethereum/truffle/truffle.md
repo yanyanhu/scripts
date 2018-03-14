@@ -12,6 +12,9 @@
 ### Connect to local node
 >truffle console --network localnode
 
+### Redeploy Smart Contract
+>truffle migrate --reset --network localnode
+
 ### Sample truffle-config.js
 ```
 module.exports = {
