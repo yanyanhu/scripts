@@ -1,0 +1,3 @@
+# Some dependencies not mentioned in document
+pip install cython
+apt-get install liblz4-dev
