@@ -48,3 +48,5 @@ module.exports = {
 
 ### Get contract ABI
 >app.abi
+
+### To integrate with js lib/app, use "truffle-contract"
