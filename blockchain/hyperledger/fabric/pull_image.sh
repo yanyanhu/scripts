@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#DOCKER_REGISTRY=bit-docker-local.artifactory.swg-devops.com/icbi-intermodal
 REMOTE_TAG=x86_64-1.0.5
 LOCAL_TAG=latest
 
