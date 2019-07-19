@@ -7,16 +7,17 @@ This tutorial is based on the environment of ```Ubuntu18.04``` and ```Fabirc 1.1
 
 ## Table of Content
 - Install k8s cluster
+- Fabric deployment preparation
 - Configure CoreDNS to support TLS communication for Fabirc
 - Deploy Fabric network and test
 
 ## Install k8s cluster
 The installation of a test k8s cluster can be done following the [official document](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/). Here we just list all those required steps for setting up a single-machine k8s cluster using ```kubeadm```.
 
-#### Install Docker Runtime
+### Install Docker Runtime
 Both Docker-CE or Docker.io will work. Please refer to the [official document](https://docs.docker.com/install/linux/docker-ce/ubuntu/) for more detail.
 
-#### Install kubeadm
+### Install kubeadm
 ```
 apt-get update && apt-get install -y apt-transport-https curl
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -29,7 +30,7 @@ apt-mark hold kubelet kubeadm kubectl
 ```
 More customized installation, please refer to the [install-kubeadm document](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
 
-#### Disable the swap
+### Disable the swap
 ```
 1. Identify configured swap devices and files with cat /proc/swaps.
 2. Turn off all swap devices and files with swapoff -a.
@@ -37,14 +38,14 @@ More customized installation, please refer to the [install-kubeadm document](htt
 4. Optional: Destroy any swap devices or files found in step 1 to prevent their reuse. Due to your concerns about leaking sensitive information, you may wish to consider performing some sort of secure wipe.
 ```
 
-#### Setup the master node
+### Setup the master node
 Running `kubeadm init <args>` to setup the master node. The following cmd will setup master with ```Calico``` network addon.
 ```
 kubeadm init --apiserver-advertise-address=$HOSTIP --pod-network-cidr=192.168.0.0/16
 ```
 For more customized setup, please refer to the [official document](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#initializing-your-control-plane-node)
 
-#### Configure kubectl
+### Configure kubectl
 Running the following cmds to make kubectl works(as cluster admin).
 ```
 mkdir -p $HOME/.kube
@@ -56,14 +57,14 @@ Alternatively, if you are the ```root``` user, you can run:
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
 
-#### Configure master node to work as worker node[optional]
+### Configure master node to work as worker node[optional]
 By default, your cluster will not schedule pods on the control-plane node for security reasons. For a single-machine Kubernetes cluster, run the following cmds to remove the constraints:
 ```
 kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
 For this tutorial, this step is **REQUIRED** since we are using a single-machine k8s cluster.
 
-#### Let more nodes join[optional]
+### Let more nodes join[optional]
 Simply running the following cmds in all worker nodes to let them join the cluster. All those cluster information can be found in the output of the previous running of `kubeadm init <args>`.
 ```
 kubeadm join <master-ip>:<master-port> --token <token> --discovery-token-ca-cert-hash sha256:<hash>
@@ -79,4 +80,31 @@ kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 ```
 After this step, all worker nodes should have switched to `Ready` status.
 
-Now you should have a single-machine k8s cluster sufficient for continuing the left parts of this tutorial.
+#### Test your Kubernetes installation
+Now you should have a single-machine k8s cluster sufficient for continuing the left parts of this tutorial. Running the following cmd to test it:
+```
+kubectl run my-nginx --image=nginx --replicas=2 --port=80
+```
+This command creates a deployment for running the NginX web server on two pods and exposing the service on port 80. If the command executes successfully, you should be able to see one deployment and two pods running as shown here:
+```
+ $ kubectl get deployments
+ NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+ my-nginx   2         2         2            2           30s
+```
+
+## Fabric deployment preparation
+Download the [tutorial example of Fabric deployment](https://github.com/yanyanhu/hlf-k8s-custom-crypto). ***Note***: all those materials are originally contributed by [hyp0th3rmi4](https://github.com/hyp0th3rmi4/hlf-k8s-custom-crypto).
+```
+git clone git@github.com:yanyanhu/hlf-k8s-custom-crypto.git
+```
+This example defines a Fabric network with 2 orgs which each of them has two peer nodes. The orderer will run in solo mode.
+Download Fabric docker images. Here we are using ```1.1.0``` version release for example.
+```
+curl -sSL http://bit.ly/2ysbOFE | bash -s -- 1.1.0 1.1.0 1.1.0
+```
+
+For more detail about Fabric network configuration and setup, please refer to the [Fabric official document](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
+
+## Configure CoreDNS to support TLS communication for Fabirc
+
+
