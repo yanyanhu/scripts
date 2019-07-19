@@ -3,7 +3,7 @@
 ## Prologue
 This document briefly introduces how to deploy a simple Hyperledge Fabric network into k8s cluster with the TLS enabled. The original idea is mainly from the following developer tutorial contributed by IBM: https://developer.ibm.com/tutorials/hyperledger-fabric-kubernetes-cluster-tls-rhel/
 
-This tutorial is based on the environment of ```Ubuntu18.04``` and ```Fabirc 1.1.0```. But it should also be applicable for other Linux distributions and Fabric 1.x release.
+This tutorial is based on the environment of ```Ubuntu18.04``` and ```Fabirc 1.1.0```. But it should be applicable for other Linux distributions and Fabric 1.x release as well.
 
 ## Table of Content
 - Install k8s cluster
@@ -57,14 +57,14 @@ Alternatively, if you are the ```root``` user, you can run:
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
 
-### Configure master node to work as worker node[optional]
+### Configure master node to work as worker node
 By default, your cluster will not schedule pods on the control-plane node for security reasons. For a single-machine Kubernetes cluster, run the following cmds to remove the constraints:
 ```
 kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
 For this tutorial, this step is **REQUIRED** since we are using a single-machine k8s cluster.
 
-### Let more nodes join[optional]
+### Let more nodes join the cluster[optional]
 Simply running the following cmds in all worker nodes to let them join the cluster. All those cluster information can be found in the output of the previous running of `kubeadm init <args>`.
 ```
 kubeadm join <master-ip>:<master-port> --token <token> --discovery-token-ca-cert-hash sha256:<hash>
@@ -93,14 +93,16 @@ This command creates a deployment for running the NginX web server on two pods a
 ```
 
 ## Fabric deployment preparation
-Download the [tutorial example of Fabric deployment](https://github.com/yanyanhu/hlf-k8s-custom-crypto). ***Note***: all those materials are originally contributed by [hyp0th3rmi4](https://github.com/hyp0th3rmi4/hlf-k8s-custom-crypto).
+Download the [tutorial example of Fabric deployment](https://github.com/yanyanhu/hlf-k8s-custom-crypto). 
+
+***Note***: all those materials are originally contributed by [hyp0th3rmi4](https://github.com/hyp0th3rmi4/hlf-k8s-custom-crypto).
 ```
 git clone git@github.com:yanyanhu/hlf-k8s-custom-crypto.git
 ```
 
 This example defines a Fabric network with 2 orgs which each of them has two peer nodes. The orderer will run in solo mode.
 
-Download Fabric docker images. Here we are using ```1.1.0``` version release for example.
+Download Fabric docker images. In this tutorial, we are using ```1.1.0``` version release.
 ```
 curl -sSL http://bit.ly/2ysbOFE | bash -s -- 1.1.0 1.1.0 1.1.0
 ```
