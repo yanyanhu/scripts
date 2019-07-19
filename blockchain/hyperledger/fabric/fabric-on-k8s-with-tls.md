@@ -97,7 +97,9 @@ Download the [tutorial example of Fabric deployment](https://github.com/yanyanhu
 ```
 git clone git@github.com:yanyanhu/hlf-k8s-custom-crypto.git
 ```
+
 This example defines a Fabric network with 2 orgs which each of them has two peer nodes. The orderer will run in solo mode.
+
 Download Fabric docker images. Here we are using ```1.1.0``` version release for example.
 ```
 curl -sSL http://bit.ly/2ysbOFE | bash -s -- 1.1.0 1.1.0 1.1.0
@@ -105,6 +107,95 @@ curl -sSL http://bit.ly/2ysbOFE | bash -s -- 1.1.0 1.1.0 1.1.0
 
 For more detail about Fabric network configuration and setup, please refer to the [Fabric official document](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
 
+
 ## Configure CoreDNS to support TLS communication for Fabirc
+The main obstacle to enable Fabric TLS in k8s cluster is the mismatch between the hostname of Fabric service components(e.g. peer nodes, orderer) defined in their TLS certs and in k8s DNS service.
 
+For example, in our example configuration, the hostname defined in the TLS cert of ```peer0.org1``` will be ```org1.kopernik.ibm.org``` per the definition of [cryptoconfig.yaml](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/crypto-config.yaml#L32). However, the hostname assgined by the k8s DNS service for inter-service communication will be ```fabric-peer1-org1.default.svc.cluster.local``` per the [service definition](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/fabric-peer0-org1.yaml#L10). In this case, when other components(e.g. other peers or orderer) talk with peer0.org1 with TLS enabled, the hostname mismatch will happen and thus fail the connection.
 
+To resolve this problem, we can leverage the ```rewrite``` capability of ```coreDNS``` which is the default DNS service provider of k8s since 1.13 release.
+
+The rewrite plugin has interesting capabilities: It enables you to write domain-name translation maps that resolve the name mismatch problems experienced with KubeDNS. By rewriting domain names, you can reference a service with its fully qualified name matching the certificate(e.g. ```peer0.org1.kopernik.ibm.org```) and translate it into the fully qualified name of the service used cluster(e.g. ```fabric-peer0-org1.default.svc.cluster.local```). For instance, you could rewrite the expected names of the services as follows:
+```
+    rewrite {
+        name regex peer0.org1.kopernik.ibm.org fabric-peer0-org1.default.svc.cluster.local
+    }
+```
+This configuration enables the translation of the query, but the response will still be based on the original name of the service. As a result, this still results in a naming conflict with the certificate name associated with the service. To achieve complete transparency, you need to translate back the returned DNS name, mapped to the IP of the original service name. You can do this by adding a directive to translate the DNS answer and group them together:
+```
+    rewrite {
+        name regex peer0.org1.kopernik.ibm.org fabric-peer0-org1.default.svc.cluster.local
+        answer name fabric-peer0-org1.default.svc.cluster.local peer0.org1.kopernik.ibm.org
+    }
+```
+
+```coreDNS``` uses ```Corefile``` to configure its behavior. The default configuration is defined as the following ```configMap```:
+```
+$kubectl describe cm coredns --namespace=kube-system
+
+Corefile:
+----
+.:53 {
+    errors
+    health
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       upstream
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    prometheus :9153
+    forward . /etc/resolv.conf
+    cache 30
+    loop
+    reload
+    loadbalance
+}
+```
+To enable the hostname rewrite, run ```kubectl edit cm coredns -n kube-system``` or ```kubectl patch cm coredns -n kube-system``` to make the following changes to the ```coredns``` configmap:
+
+```
+$kubectl describe cm coredns --namespace=kube-system
+
+Corefile:
+----
+.:53 {
+    errors
+    health
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       upstream
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    rewrite {
+        name regex peer0.org1.kopernik.ibm.org fabric-peer0-org1.default.svc.cluster.local
+        answer name fabric-peer0-org1.default.svc.cluster.local peer0.org1.kopernik.ibm.org
+    }
+    rewrite {
+        name regex peer1.org1.kopernik.ibm.org fabric-peer1-org1.default.svc.cluster.local
+        answer name fabric-peer1-org1.default.svc.cluster.local peer1.org1.kopernik.ibm.org
+    }
+    rewrite {
+        name regex peer0.org2.kopernik.ibm.org fabric-peer0-org2.default.svc.cluster.local
+        answer name fabric-peer0-org2.default.svc.cluster.local peer0.org2.kopernik.ibm.org
+    }
+    rewrite {
+        name regex peer1.org2.kopernik.ibm.org fabric-peer1-org2.default.svc.cluster.local
+        answer name fabric-peer1-org2.default.svc.cluster.local peer1.org2.kopernik.ibm.org
+    }
+    rewrite {
+        name regex orderer.kopernik.ibm.org fabric-orderer.default.svc.cluster.local
+        answer name fabric-orderer.default.svc.cluster.local orderer.kopernik.ibm.org
+    }
+    prometheus :9153
+    forward . /etc/resolv.conf
+    cache 30
+    loop
+    reload
+    loadbalance
+}
+```
+As you can see, several ```rewrite``` policies have been added to fix the hostname mismatch problem. Now we are ready to deploy the example Fabric network into k8s cluster with TLS enabled.
+
+For more information about coreDNS usage in k8s, please refer to the [document](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#coredns). And for more information about ```rewrite``` plugin of ```coreDNS```, please refer to the [plugin description](https://github.com/coredns/coredns/tree/master/plugin/rewrite).
