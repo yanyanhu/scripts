@@ -109,9 +109,9 @@ For more detail about Fabric network configuration and setup, please refer to th
 
 
 ## Configure CoreDNS to support TLS communication for Fabirc
-The main obstacle to enable Fabric TLS in k8s cluster is the mismatch between the hostname of Fabric service components(e.g. peer nodes, orderer) defined in their TLS certs and in k8s DNS service.
+The main obstacle to enable Fabric TLS in k8s cluster is the mismatch between the hostname of Fabric service components(e.g. peer nodes, orderer) defined in their TLS certs and the one assgined by k8s DNS service.
 
-For example, in our example configuration, the hostname defined in the TLS cert of ```peer0.org1``` will be ```org1.kopernik.ibm.org``` per the definition of [cryptoconfig.yaml](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/crypto-config.yaml#L32). However, the hostname assgined by the k8s DNS service for inter-service communication will be ```fabric-peer1-org1.default.svc.cluster.local``` per the [service definition](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/fabric-peer0-org1.yaml#L10). In this case, when other components(e.g. other peers or orderer) talk with peer0.org1 with TLS enabled, the hostname mismatch will happen and thus fail the connection.
+For example, in our example configuration, the hostname defined in the TLS cert of ```peer0.org1``` will be ```org1.kopernik.ibm.org``` per the definition of [cryptoconfig.yaml](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/crypto-config.yaml#L32). However, the hostname assgined by the k8s DNS service will be ```fabric-peer1-org1.default.svc.cluster.local``` per the [service definition](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/fabric-peer0-org1.yaml#L10). In this case, when other Fabric components(e.g. other peers or orderer) or exteral requestors(e.g. Fabric client) talk with ```peer0.org1```, the hostname mismatch will happen and thus fail the TLS connection.
 
 To resolve this problem, we can leverage the ```rewrite``` capability of ```coreDNS``` which is the default DNS service provider of k8s since 1.13 release.
 
@@ -199,3 +199,46 @@ Corefile:
 As you can see, several ```rewrite``` policies have been added to fix the hostname mismatch problem. Now we are ready to deploy the example Fabric network into k8s cluster with TLS enabled.
 
 For more information about coreDNS usage in k8s, please refer to the [document](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#coredns). And for more information about ```rewrite``` plugin of ```coreDNS```, please refer to the [plugin description](https://github.com/coredns/coredns/tree/master/plugin/rewrite).
+
+#### Deploy Fabric network and test
+To deploy the example network, create the following folder in your system and copy all those required materials including channel artifacts, cryptos, example chaincode and test scripts into it.
+```
+$mkdir -p /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/
+$cp -r channel-artifacts/ /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/
+$cp -r crypto-config/ /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/
+$cp -r examples/ /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/
+$cp -r scripts/ /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/
+```
+You can change the location by tweaking the mount point defined in peer configuration files, e.g. [fabric-peer0-org1.yaml](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/fabric-peer0-org1.yaml#L115).
+
+One last todo before launching the deployment is configuring the host DNS for chaincode container. In the Fabric architecture, a peer runs a smart contract (chaincode) in an isolated container environment, and a peer can achieve this by directly deploying the container through the Docker daemon’s Unix socket interface. This chaincode container needs to have a way to contact the peer so that it can be managed by it, but a DNS query to the Docker network for the peer that is running on Kubernetes cannot be resolved. You need to configure the chaincode container with the DNS server IP address of the Kubernetes cluster so that it can call home. 
+
+For every peer in the network, you need to specify the environment variable ```CORE_VM_DOCKER_HOSTCONFIG_DNS```, which is used to inject the IP address of the DNS server into the chaincode container during start-up. Here is an example: [fabric-peer0-org1.yaml](https://github.com/yanyanhu/hlf-k8s-custom-crypto/blob/master/fabric-peer0-org1.yaml#L75).
+
+```
+        - name: CORE_VM_DOCKER_HOSTCONFIG_DNS
+          value: "10.96.0.10" # Change this to the actual DNS service IP in your cluster
+```
+
+You can get the DNS service IP by running the following cmd:
+```
+$kubectl get service/kube-dns --namespace=kube-system
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   24h
+```
+
+Now you can launch the network and initialize the test process by running the following shell script:
+```
+$./start-fabric.sh
+```
+If the test passes, the following output will be displayed in the terminal:
+```
+===================== All GOOD, End-2-End execution completed ===================== 
+
+
+ _____   _   _   ____            _____   ____    _____ 
+| ____| | \ | | |  _ \          | ____| |___ \  | ____|
+|  _|   |  \| | | | | |  _____  |  _|     __) | |  _|  
+| |___  | |\  | | |_| | |_____| | |___   / __/  | |___ 
+|_____| |_| \_| |____/          |_____| |_____| |_____|
+```
