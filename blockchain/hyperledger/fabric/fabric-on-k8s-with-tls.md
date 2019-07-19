@@ -202,7 +202,7 @@ As you can see, several ```rewrite``` policies have been added to fix the hostna
 
 For more information about coreDNS usage in k8s, please refer to the [document](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#coredns). And for more information about ```rewrite``` plugin of ```coreDNS```, please refer to the [plugin description](https://github.com/coredns/coredns/tree/master/plugin/rewrite).
 
-#### Deploy Fabric network and test
+## Deploy Fabric network and test
 To deploy the example network, create the following folder in your system and copy all those required materials including channel artifacts, cryptos, example chaincode and test scripts into it.
 ```
 $mkdir -p /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/
