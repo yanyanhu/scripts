@@ -1,11 +1,12 @@
 #!/bin/bash
 
-STACK_NAME=example-stack
+STACK_NAME=$1
+RUNTIME=${2:-60} # 60 seconds timeout
+SLEEPTIME=${3:-10} # 10 seconds sleep time
 STACK_EXISTENCE=1
-RUNTIME=20 # 20 seconds timeout
-SECONDS=0 # Reset seconds counting
 
 echo "Waiting for Stack $STACK_NAME to be deleted..."
+SECONDS=0 # Reset seconds counting
 while [ $SECONDS -lt $RUNTIME ]
 do
     STACK_EXISTENCE=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --region ap-southeast-1 | grep $STACK_NAME | wc -l)
@@ -14,8 +15,8 @@ do
         echo "Stack has been deleted successfully."
         break
     fi
-    echo "sleep 5 seconds..."
-    sleep 5
+    echo "sleep $SLEEPTIME seconds..."
+    sleep $SLEEPTIME
 done
 
 if [ "$STACK_EXISTENCE" -ne 0 ]; then
