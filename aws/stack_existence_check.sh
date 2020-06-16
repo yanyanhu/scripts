@@ -7,7 +7,7 @@ REGION=${4:-ap-southeast-1} # Default SG region
 
 echo "Waiting for Stack $STACK_NAME to be deleted..."
 SECONDS=0 # Reset seconds counting
-STACK_STR='"StackName": "gitlab-example"'
+STACK_STR="\"StackName\": \"$STACK_NAME\""
 STACK_EXISTENCE=1
 while [ $SECONDS -lt $RUNTIME ]
 do
