@@ -1,0 +1,18 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+    vault:
+      image: vault
+      container_name: vault
+      ports:
+        - 8200:8200
+      restart: unless-stopped
+      volumes:
+        - ./config:/vault/config
+      cap_add:
+        - IPC_LOCK
+      entrypoint: vault server -config=/vault/config/vault.hcl
+
+volumes:
+  db-data:
