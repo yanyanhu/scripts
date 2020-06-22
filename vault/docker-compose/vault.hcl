@@ -4,7 +4,7 @@ listener "tcp" {
 }
 
 storage "postgresql" {
-        connection_url = "postgres://$USER:$PASSWORD@127.0.0.1:5432/vault?sslmode=disable"
+        connection_url = "postgres://$USER:$PASSWORD@localhost:5432/vault?sslmode=disable"
 }
 
 ui = true
