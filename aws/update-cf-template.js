@@ -25,10 +25,8 @@ try {
         "ResponsePagePath" : "/surveys/index.html"
     }]
 
-    // Extra all cache behaviors
-    var cacheBehaviors = template.Resources.CloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors
-
     // Update the cache behavior of `/api/*`
+    var cacheBehaviors = template.Resources.CloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors
     cacheBehaviors.forEach(function(value, index) {
         if (value["PathPattern"] == '/api/*') {
             cacheBehaviors[index]["AllowedMethods"] = [
@@ -45,10 +43,23 @@ try {
                 "QueryString": true
             }
             template.Resources.CloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cacheBehaviors
-            var dataUpdated = JSON.stringify(template, null, 4)
-            fs.writeFileSync(process.env.STACK_TEMPLATE_UPDATED, dataUpdated)
         }
     })
+
+    // Update the S3 origin to used pre-created Origin Access Identity
+    var origins = template.Resources.CloudFrontDistribution.Properties.DistributionConfig.Origins
+    origins.forEach(function(value, index) {
+        // TODO: Make the matching DomainName configurable
+        if (value["DomainName"] == process.env.S3_BUCKET_NAME + '.s3.amazonaws.com') {
+            origins[index]["S3OriginConfig"]["OriginAccessIdentity"] = 'origin-access-identity/cloudfront/' + process.env.OAI
+            template.Resources.CloudFrontDistribution.Properties.DistributionConfig.Origins = origins
+        }
+    })
+
+    // Write updated template to the file
+    var dataUpdated = JSON.stringify(template, null, 4)
+    fs.writeFileSync(process.env.STACK_TEMPLATE_UPDATED, dataUpdated)
+
 } catch(err) {
     console.error(err)
 }

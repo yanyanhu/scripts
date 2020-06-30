@@ -7,15 +7,23 @@
 
 # Set region to us-east-1 since it is the only region support
 # lambda with cloudfront event.
+#
 export REGION=us-east-1
 export STACK_TEMPLATE=./stack-template.yml
 export STACK_TEMPLATE_UPDATED=./stack-template-to-update.yml
+
+# Reference value for pre-created resources, e.g. Origin Access
+# Identity and S3 origin domain name. Those values are kept in
+# Gitlab CI as environment variables
+echo "--------- OAI: $OAI ---------"
+echo "--------- S3_BUCKET_NAME: $S3_BUCKET_NAME ---------"
 
 
 # Deploy lambda functions and cloudfront distributions using serverless cli.
 # This will generate a cloudformation stack which will be updated further.
 echo "--------- serverless deploy --stage prod --verbose --region $REGION --output json | tee deploy.log"
 serverless deploy --stage prod --verbose --region $REGION --output json | tee deploy.log
+
 
 # Extract the ID of cloudfront and cloudformation from deploy log
 export CloudFrontID=$(cat deploy.log | grep "CloudFrontDistribution:" | awk '{print $2}')
@@ -29,6 +37,7 @@ else
     echo "$STACKID UPDATE_COMPLETE"
 fi
 
+
 # Fetch the original stack template, update the configuration
 # and update the stack.
 echo "--------- aws cloudformation get-template --stack-name $STACKID --region $REGION | jq '.TemplateBody' > $STACK_TEMPLATE"
@@ -38,6 +47,7 @@ aws cloudformation get-template --stack-name $STACKID --region $REGION | jq '.Te
 echo "--------- $STACK_TEMPLATE ---------"
 cat $STACK_TEMPLATE
 echo "------------------ End ---------------------"
+
 
 # Reconfigure viewer protocol policy of all cache behaviors from "allow-all"
 # to "redirect-to-https"
@@ -52,14 +62,18 @@ sed -i 's/allow-all/redirect-to-https/g' $STACK_TEMPLATE
 #
 node ./scripts/update-cf-template.js
 
+
 # Review the updated stack template
 echo "--------- $STACK_TEMPLATE_UPDATED ---------"
 cat $STACK_TEMPLATE_UPDATED
 echo "------------------ End ---------------------"
 
+
 # Update stack to adopt the above changes
 echo "--------- aws cloudformation update-stack --stack-name $STACKID --region $REGION --template-body file://$STACK_TEMPLATE_UPDATED --capabilities CAPABILITY_NAMED_IAM"
 aws cloudformation update-stack --stack-name $STACKID --region $REGION --template-body file://$STACK_TEMPLATE_UPDATED --capabilities CAPABILITY_NAMED_IAM
 
-# TODO(Add stack creation/update status check)
+# Check the stack status
 ./scripts/cf_stack_check.sh update $STACKID $REGION 600 30
+
+exit 0
