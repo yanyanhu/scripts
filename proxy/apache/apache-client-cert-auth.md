@@ -1,6 +1,6 @@
 # Client Certificate Based Authentication With Apache
 
-Refer from: https://manintheit.org/security/ssl-client-certificate-authentication-with-apache/
+Reference: https://manintheit.org/security/ssl-client-certificate-authentication-with-apache/
 
 ### Creating CA Certificate
 
