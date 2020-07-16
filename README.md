@@ -1,2 +1,2 @@
 # scripts
-Some useful scripts for daily work.
+Some useful scripts and documents for daily work.
