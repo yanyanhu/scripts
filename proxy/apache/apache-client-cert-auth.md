@@ -109,8 +109,7 @@ sudo service httpd restart
 
 ### Experimenting with Curl
 
-Without specifying the client certificate
-
+Without specifying the ca certificate:
 ```
 [ec2-user@ip-172-31-100-215 tmp-certs]$ curl https://ankara.example.com:9443 -v
 * Rebuilt URL to: https://ankara.example.com:9443/
@@ -137,6 +136,36 @@ curl failed to verify the legitimacy of the server and therefore could not
 establish a secure connection to it. To learn more about this situation and
 how to fix it, please visit the web page mentioned above.
 ``` 
+
+Without specifying the client certificate:
+```
+[ec2-user@ip-172-31-100-215 tmp-certs]$ curl -v --cacert ca.crt  https://ankara.example.com:9443
+* Rebuilt URL to: https://ankara.example.com:9443/
+*   Trying 172.31.100.215...
+* TCP_NODELAY set
+* Connected to ankara.example.com (172.31.100.215) port 9443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
+* successfully set certificate verify locations:
+*   CAfile: ca.crt
+  CApath: none
+* TLSv1.2 (OUT), TLS header, Certificate Status (22):
+* TLSv1.2 (OUT), TLS handshake, Client hello (1):
+* TLSv1.2 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Request CERT (13):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Certificate (11):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS alert, handshake failure (552):
+* error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+* Closing connection 0
+curl: (35) error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+```
 
 With client certificate
 ```
@@ -203,6 +232,7 @@ With client certificate
 ```
 
 ### Converting certificate and to pkcs12 format
+[WIP]
 
 If you want to import a certificate to a web browser, you have to convert your existing certificate other than PEM format. For the Mozilla Firefox, you need to convert it  to pkcs12 format.
 ```
