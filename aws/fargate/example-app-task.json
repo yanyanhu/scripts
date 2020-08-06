@@ -1,0 +1,24 @@
+{
+    "family": "fargate-example-app-family",
+    "executionRoleArn": "$ARN_ROLE",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "fargate-example-app",
+            "image": "$IMAGE",
+            "portMappings": [
+                {
+                    "containerPort": 8088,
+                    "hostPort": 8088,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512"
+}

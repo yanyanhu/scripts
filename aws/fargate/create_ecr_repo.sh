@@ -7,7 +7,7 @@ export AWS_ACCESS_KEY_ID=$ID
 export AWS_SECRET_ACCESS_KEY=$KEY
 
 export REGION=ap-southeast-1
-export APP_NAME=fargate-example-app
+export APP_NAME=${1:-fargate-example-app}
 export IMAGE_NAME=$APP_NAME
 export IMAGE_TAG=latest
 export ECR_REPO_NAME=$APP_NAME
