@@ -1,0 +1,47 @@
+image: python:3.7
+
+stages:
+  - build
+  - test
+  - deploy
+
+
+# Running the unit test and build the artifacts. This
+# job will be triggered by a merge to the develop/master branch.
+build:
+  stage: build
+  script:
+    - echo "------ Running unit test ------"
+    - ./scripts/test-unit.sh
+    - echo "------ Build will be done by AWS EB, skip ------"
+  only:
+    - develop
+    - master
+
+# Deploy into test environment and test the change. This
+# job will be triggered by a merge to the develop branch.
+test:
+  stage: test
+  before_script:
+    - ./scripts/install-aws-eb-cli.sh
+  script:
+    - echo "------ Deploying into the test environment ------"
+    - ./scripts/deploy.sh TEST
+    - echo "------ TODO(Anyone):Running integration test ------"
+  only:
+    - develop
+
+# Deploy into prod environment. This job will be triggered
+# by a merge to the master branch
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  before_script:
+    - ./scripts/install-aws-eb-cli.sh
+  script:
+    - ./scripts/deploy.sh PROD
+  after_script:
+    - echo "------ TODO(Anyone):Health check ------"
+  only:
+    - master

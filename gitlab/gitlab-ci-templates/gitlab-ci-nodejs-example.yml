@@ -1,0 +1,51 @@
+image: node:latest
+
+stages:
+  - build
+  - test
+  - deploy
+
+
+# Running the unit test and build the artifacts. This
+# job will be triggered by a merge to the develop/master branch.
+build:
+  stage: build
+  script:
+    - ./scripts/build.sh
+  artifacts:
+    paths:
+      - ./build/
+    expire_in: 5 min
+  only:
+    - develop
+    - master
+
+# Deploy into test environment and test the change. This
+# job will be triggered by a merge to the develop branch.
+test:
+  stage: test
+  dependencies:
+    - build
+  before_script:
+    - ./scripts/install_aws.sh
+  script:
+    - echo "------ Deploying into the test environment ------"
+    - ./scripts/deploy.sh TEST
+    - echo "------ TODO(Anyone):Running test cases ------"
+  only:
+    - develop
+
+# Deploy into prod environment. This job will be triggered
+# by a merge to the master branch
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  before_script:
+    - ./scripts/install_aws.sh
+  script:
+    - ./scripts/deploy.sh PROD
+  after_script:
+    - echo "------ TODO(Anyone):Health check ------"
+  only:
+    - master
