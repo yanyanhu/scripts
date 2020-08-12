@@ -1,2 +1,3 @@
 # scripts
-Some useful scripts and documents for daily work.
+
+Collection of useful scripts, templates and documents.
