@@ -5,6 +5,10 @@
 
 set -e
 
+# Setup PATH if eb is installed in self-contained way
+# Refer to the script of "install-eb-cli.sh" for detail
+echo 'export PATH="/root/.ebcli-virtual-env/executables:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
+
 ENV=${1:-TEST}
 
 echo "--------- Set up asw env vars for $ENV environment."
