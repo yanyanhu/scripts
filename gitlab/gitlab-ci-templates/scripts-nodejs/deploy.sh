@@ -5,8 +5,6 @@
 
 set -e
 
-source ~/.bashrc
-
 ENV=${1:-TEST}
 
 echo "--------- Set up asw env vars for $ENV environment."
