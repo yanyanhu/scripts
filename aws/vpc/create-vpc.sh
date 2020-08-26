@@ -11,7 +11,8 @@ export AWS_ACCESS_KEY_ID=$ID
 export AWS_SECRET_ACCESS_KEY=$KEY
 
 export REGION=ap-southeast-1
-export STACK_NAME=${1:-sc-test-vpc-stack}
-export VPC_NAME=sc-test-vpc
+export STACK_NAME=${1:-test-vpc-stack}
+export VPC_NAME=${1:-test-vpc}
+export VPC_TEMPLATE="file://vpc-cf-template-3az.yaml"
 
-aws cloudformation create-stack --region $REGION --stack-name $STACK_NAME --template-body file://vpc-cf-template.yaml --parameters ParameterKey=EnvironmentName,ParameterValue=$VPC_NAME
+aws cloudformation create-stack --region $REGION --stack-name $STACK_NAME --template-body $VPC_TEMPLATE --parameters ParameterKey=EnvironmentName,ParameterValue=$VPC_NAME
