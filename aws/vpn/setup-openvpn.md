@@ -39,7 +39,10 @@ After your EC2 instance is running, it is a best practice to associate an Elasti
 This test implementation might not be reliable in a production environment because in this configuration the VPN appliance would represent a single point of failure. So, after you complete your test, you might want to consider more robust options, such as purchasing a second instance and configuring both instances in a high-availability (HA) configuration. For more information on implementing an HA deployment, see Active / Active High Availability Setup for OpenVPN Access Server on the OpenVPN website.
 
 ## Completing the setup wizard
-When your OpenVPN EC2 instance is running, you can connect to it by using SSH. To do so, follow the procedure in Connecting to Your Linux Instance Using SSH.
+When your OpenVPN EC2 instance is running, you can connect to it by using SSH. To do so, follow the procedure in Connecting to Your Linux Instance Using SSH. Use `root` user instead of `ec-user` the first time login:
+```
+ssh -i $SSH-KEY root@$VPN-SERVER
+```
 
 The first time you log in to the Access Server, a setup wizard runs to enable you to configure initialization parameters before you can access the admin web interface. In this wizard, you specify some network details and define an admin user.
 
@@ -80,9 +83,13 @@ The following procedure describes how to configure the appliance and use the Ope
 
 By default, the user is dynamically assigned an IP from the private 172.27.224.0/20 CIDR pool and uses NAT to forward traffic to subnets belonging to your VPC.
 
-2. Open the web interface login page by pointing to the public IP of the Access Server. The following image shows the login page.2. 
+2. Open the web interface login page by pointing to the public IP of the Access Server, e.g.
+```
+https://openvpn-server-ip/
+```
+User will be asked for the username and password to login.
 
-3. Download a connection profile for the user. You can also download the OpenVPN client if you haven't already done so.
+3. After login, download a connection profile for the user. You can also download the OpenVPN client if you haven't already done so.
 
 4. Import the user profile in the client app.
 
