@@ -14,6 +14,7 @@ $eb config save CONFIG_FILE --cfg SAVED_CFG_NAME
 ```
 $eb create --cfg SAVED_CFG_NAME ENV_NAME
 ```
+Use platform settings from a saved configuration in .elasticbeanstalk/saved_configs/ or your Amazon S3 bucket. Specify the name of the file only, without the .cfg.yml extension.
 
 ## Terminate a running environment
 ```
