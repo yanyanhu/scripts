@@ -1,7 +1,7 @@
 ## Check cookie existence
 
 RewriteEngine On
-RewriteCond %{HTTP_COOKIE} !\bAUTHORIZED_RELAY=$KEY
+RewriteCond %{HTTP_COOKIE} !\bAUTHORIZED_RELAY=$KEY\b
 RewriteRule ^ - [F]
 
 Reference:
