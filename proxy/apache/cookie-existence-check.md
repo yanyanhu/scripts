@@ -2,6 +2,7 @@
 
 ```
 RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/health_check
 RewriteCond %{HTTP_COOKIE} !\bAUTHORIZED_RELAY=$KEY\b
 RewriteRule ^ - [F]
 ```
