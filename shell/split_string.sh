@@ -7,6 +7,7 @@
 # bcd|234|yyy
 # cde|456|zzz
 #
+# Ref: https://stackoverflow.com/questions/8009664/how-to-split-a-delimited-string-into-an-array-in-awk
 
 # Replace delimeter with other character if needed
 cat $FILENAME | awk '{split($0,a,"|"); print a[1]}'
