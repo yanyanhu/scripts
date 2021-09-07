@@ -33,4 +33,5 @@ NOTE: This key should be used carefully. It is dangerous to include a publicly k
 
 References:
 [1] https://stackoverflow.com/questions/65351211/how-to-configure-cors-on-aws-s3/69089544#69089544
+
 [2] https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-use-case-4
