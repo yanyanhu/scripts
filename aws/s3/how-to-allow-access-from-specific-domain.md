@@ -11,7 +11,7 @@ Apply the following bucket policy which will deny all access besides the ones fr
     "Id": "http referer policy example",
     "Statement": [
         {
-            "Sid": "Allow get requests originating from mindline.sg.",
+            "Sid": "Allow get requests originating from give domain.",
             "Effect": "Deny",
             "Principal": "*",
             "Action": "s3:GetObject",
