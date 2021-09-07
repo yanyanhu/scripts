@@ -32,6 +32,7 @@ Apply the following bucket policy which will deny all access besides the ones fr
 NOTE: This key should be used carefully. It is dangerous to include a publicly known referer header value. Unauthorized parties can use modified or custom browsers to provide any aws:referer value that they choose. As a result, aws:referer should not be used to prevent unauthorized parties from making direct AWS requests. It is offered only to allow customers to protect their digital content, such as content stored in Amazon S3, from being referenced on unauthorized third-party sites. For more information, see aws:referer in the IAM User Guide.
 
 References:
+
 [1] https://stackoverflow.com/questions/65351211/how-to-configure-cors-on-aws-s3/69089544#69089544
 
 [2] https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-use-case-4
