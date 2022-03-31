@@ -13,14 +13,14 @@ let response = {
 
 let requestOptions = {
     timeout: 10,
-    host: "HOSTNAME",
-    path: "/path",
-    method: "GET",
+    host: "www.example.com",
+    path: "",
+    method: "",
     rejectUnauthorized: false,
     requestCert: true,
 }
 
-let request = async (httpOptions, data) => {
+let request = async (httpOptions, postData) => {
     return new Promise((resolve, reject) => {
         let req = https.request(httpOptions, (res) => {
             let body = ''
@@ -31,7 +31,8 @@ let request = async (httpOptions, data) => {
         req.on('error', (e) => {
                 reject(e)
             })
-        // req.write(data) // No need for GET request
+	// No need for GET request
+        req.write(postData)
         req.end()
     })
 }
@@ -39,14 +40,26 @@ let request = async (httpOptions, data) => {
 exports.handler = async (event, context) => {
     try {
         let pathArray = event.rawPath.split('/');
-        console.log(pathArray)
-        if (pathArray[1] == "cms") {
-          requestOptions.path = '/' + pathArray[2]
+
+        let rawPath = ''
+        if (pathArray[1] == "path") {
+            rawPath = '/' + event.rawPath.split('/').slice(2).join('/')
         } else {
-          requestOptions.path = event.rawPath
+            rawPath = event.rawPath
         }
+
+        if (event.rawQueryString != '') {
+            requestOptions.path = rawPath + '?' + event.rawQueryString
+        } else {
+            requestOptions.path = rawPath
+        }
+
+        requestOptions.method = event.requestContext.http.method
+        console.log(requestOptions)
+
         let result = await request(requestOptions, JSON.stringify({v: 1}))
-	// If needed, stringify the result before return
+
+        // If needed, stringify the result before return
         // response.body = JSON.stringify(result)
         response.body = result
         return response
@@ -56,12 +69,12 @@ exports.handler = async (event, context) => {
     }
 }
 
-// Example of simple redirect
+// //Example of simple redirect
 // exports.handler = async (event) => {
 //     const response = {
-//         statusCode: 302,
+//         statusCode: 302, // also tried 301
 //         headers: {
-//             Location: 'https://HOSTNAME'
+//             Location: 'https://www.example.com'
 //         }
 //     };
 
