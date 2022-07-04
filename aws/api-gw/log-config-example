@@ -1,0 +1,3 @@
+# For debugging API gateway issue, enable the following log
+
+{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey", "context.error.message":"$context.error.message","context.integration.integrationStatus":"$context.integration.integrationStatus", "context.integrationErrorMessage":"$context.integrationErrorMessage", "context.integrationLatency":"$context.integrationLatency","context.path":"$context.path","status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }
